@@ -1,4 +1,4 @@
-# Study of Oscillators: Theory, Computation, & Intuition
+# Study of Oscillators
 
 This repository explores the dynamics of **linear and non-linear oscillators** through both analytical derivations and computational simulations. Unlike standard literature that often presents solutions as *fait accompli*, this project focuses on the underlying motivations and the physical intuition behind the assumptions used to solve these differential equations.
 
