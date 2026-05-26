@@ -1,0 +1,1202 @@
+\documentclass[10pt,twoside]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsfonts, amssymb ,tikz,listings,dirtytalk,verbatim,mathtools,graphicx,url,listings}
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\usepackage[acronym]{glossaries}
+\usepackage[colorlinks=true, urlcolor=blue]{hyperref}
+\usepackage{xcolor} 
+\lstset{
+    basicstyle=\ttfamily\footnotesize, % Reduces the font size
+    breaklines=true,                   % Wraps long lines
+    frame=single,                      % Adds a border around the code
+    numbers=left,                      % Adds line numbers
+    numberstyle=\tiny,                 % Small line numbers
+    keywordstyle=\color{blue},         % Python keyword color
+    commentstyle=\color{gray},         % Comment color
+    language=Python
+}
+\title{Study of Oscillator}
+\author{}
+\date{Oct 2025}
+
+\makeglossaries
+
+%-----------------------------------%
+\newglossaryentry{Laplace Transform}{
+    name= Laplace Transform,
+    description ={Nice
+    }
+}
+\newglossaryentry{Argand plane}{
+    name = Argand plane,
+    description= {
+    hello
+    }
+}
+\newglossaryentry{independent state variables}{
+    name = Inde pendent State Variables,
+    description= {define fundamental definition
+    }
+}
+\newglossaryentry{damping}{
+    name=Damping,
+    description={The reduce in Amplitude or more appropriately Energy of the system with time is called Damping}
+}
+\newglossaryentry{Transient}{
+    name=Transient ,
+    description={This word is a latin word which means \textit{to pass over} or \textit{to go across} these are the types of responses that take place in that moment}
+}
+\newglossaryentry{Steady}{
+    name=Steady ,
+    description={This are the types of responses that remains after long time has passes and the system is allowed to take a particular state}
+}
+\newglossaryentry{SHM}{
+    name=SHM ,
+    description={it stands for Simple Harmonic Motion ............... }%giving fundamental defination of SHM
+}
+\newglossaryentry{FBD}{
+    name= Free Body Analysis ,
+    description={
+    hello %fundamental defination
+    }
+}
+\newglossaryentry{Inherent Deterministic Nature of Newtonian /Classical mechanics}{
+    name= Inherent Deterministic Nature of Newtonian /Classical mechanics,
+    description={
+    hello
+    }
+}
+\newglossaryentry{Classical Mechanics}{
+    name= Classical Mechanics,
+    description={ define fundamental definition
+    }
+}
+\newglossaryentry{Newtonian Mechanics}{
+    name= Newtonian Mechanics,
+    description={define fundamental definition
+    }
+}
+\newglossaryentry{Harmonic Balance}{
+    name = Harmonic Balance,
+    description = {As the motion is .}
+}
+\newglossaryentry{Newtons Second Law}{
+    name = Newtons Second Law ,
+    description ={ hello}
+}
+%-----------------------------------%
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\listoffigures
+\newpage
+
+\chapter*{Abstract}
+This is a brief study of solutions to simple models of linear and non-linear oscillators or rather the lack of solution in some cases. We borrow ideas from complex analysis use them to get solutions to the differential equations of the oscillator. All the mathematics which was used is developed in the Appendix from the sratch to try to motivate why did we do what we did at a particular point in our analysis. This report assumes high school level of knowledge in Math, Physics throughout. In the last section we used Computational Methods to get the graphs of the done analysis and to valid our results. 
+
+This report provides a comprehensive investigation into the dynamics of linear and non-linear oscillators, bridging the gap between fundamental Newtonian mechanics and advanced analytical approximation techniques. We begin by establishing a rigorous framework for linear systems, utilizing Laplace Transforms to decompose responses into transient and steady-state components. Recognizing the limitations of linearity in high-amplitude natural systems, we extend this analysis to weakly non-linear oscillators, including the Duffing, Van der Pol, and Rayleigh models. Using the method of Harmonic Balance and complex phasor representation, we derive generalized amplitude-frequency and phase-frequency relations involving Euler’s Beta and Gamma functions. These analytical derivations are compared against numerical simulations implemented via the 4th-order Runge-Kutta (RK4) method. The results demonstrate that the harmonic approximation accurately predicts complex phenomena such as resonance shifts and jump resonance, providing a robust tool for analyzing non-linear dissipative systems. 
+\chapter{Linear Oscillators}
+Here when we use the term \textbf{Linear} here it is a term borrowed from the theory of ODE (Ordinary Differential Equation) where the $n^{th}$ Order Linear Differential Equation is in the form of :-
+\begin{equation}
+\begin{split}
+\label{gen_nth_ode}
+P_0(t) \frac{d^ny}{dt^n} &+ P_1(t) \frac{d^{n-1}y}{dt^{n-1}} + P_2(t) \frac{d^{n-2}y}{dt^{n-2}} \\
+&\quad + \ldots + P_{n-1}(t) \frac{dy}{dt} + P_n(t)y = F(t)
+\end{split}
+\end{equation}
+
+where $P_0,P_1,....,P_n$ and $F$  are real valued continuous function on some Interval \\I : $\alpha < t < \beta$ that is $P_n,F$ only depend on $t$ and not on $x$ or any order of derivative of $x$ .
+
+For this Equation to truly be $n^{th}$ order $P_o \neq 0 $ . 
+
+Let $y_1,y_2,\ldots,y_n$ be the solution to \eqref{gen_nth_ode} then all the solution are in the form of \\ $y = c_1y_1+c_2y_2+ \ldots +c_ny_n$ which are called as linear combination of the solution set $y_1,y_2,\ldots,y_n$ , thus we call \eqref{gen_nth_ode} $n^{th}$ order linear differential equation . 
+
+This is the key concept between superposition principle of SHM and many other natural phenomenon like interference and so on thus study of linear Oscillator is important.One obvious assumputions of Linear Oscillator is that we obey Hooke's law of springs 
+
+
+
+%These are oscillators, which can be explicitly solved in closed form, which means they also show superposition and obey Hooke's law of springs and can be linearly well approximated for small amplitudes without showing chaotic behaviors. (such as hysteresis, multi-stable points, or unpredictable motion.)
+
+\section{Free Damped Oscillators }
+Here we try to find a general solution for a differential equation which is a approximation of a damped spring-mass system :
+\begin{equation}
+\label{final_FDO_form}
+    \ddot{x} + \gamma \dot{x} + \omega_0^2 x = 0
+\end{equation}
+before going into the analytical solution of this equation , first let us justify this equation and prove that this is indeed a good equation which can approximate a damped spring-mass system .
+\subsection{Justification of the given motion equation}\label{Justification of the given motion equation}
+We know from Newtonian Mechanics that a \gls{SHM} motion equation is given by $\ddot{x} + \omega_0^2 x = 0 $ now to include the \gls{damping} from the spring we introduce an term $+\gamma\dot{x}$ on the LHS of the SHM equation in this section I will try to intuitively prove why is this term correct for slow speed damping .\\
+The damping force($F_d$) must be a force with should oppose the motion of a SHM that is it should be such that it is a dissipative force which is withdrawing energy from the system which basically means $\dfrac{dE}{dt}$ should be less than zero. $\dfrac{dE}{dt} = P$ therefore $P<0$ for $F_d$ power for this force is always negative , an important conclusion which is going to be useful later .\\
+ Drawing the \gls{FBD} of the system we get :-
+ %draw a plot for spring mass system
+\begin{align*}
+    F_{net} &= F_{spring} + F_{damping}\\
+    ma      &= -kx + F_{damping}\\
+\end{align*}
+\begin{equation}
+\label{gen_diff_FDO_form}
+m\dfrac{d^2x}{dt^2} = -kx +F_{damping}
+\end{equation}
+
+Now we will try to find what is a possible function of $F_d$ , what are the possible variables on which $F_d$ depends upon . We can conclude that it should depend upon variables which define a motion of the given system because of the \textbf{\gls{Inherent Deterministic Nature of Newtonian /Classical mechanics}} . That is the possible set of variables on which $F_d$ depends upon is $ \{ x , \dot{x}, \ddot{x} , \dddot{x} , \ldots ,\dot{x^n} \} $ where $\dot{x^n} = \dfrac{d^nx}{dt^n} $ .\\
+From here we can approach the problem in the following ways :-\\
+
+\textbf{I$^{st}$ method}\\
+
+ The variables we choose to define the motion on must be \textbf{\gls{independent state variables}}, which in this motion are the position of the particle ($x$) and velocity of the particle ($\dot{x}$) .\\This is a statement which is taken from \gls{Classical Mechanics} which is the framework which we are using to analyse the motion .\\
+ \textbf{Why is $x$ and $\dot{x}$ the only independent state variable ?}
+ 
+ As the motion is defined as a Second-order ODE which is defined as in \gls{Newtons Second Law} and by observation of several experiment we can say for sure that all the fundamental forces (gravity, friction ,spring, electrostatic , magneto-static ,etc) all holds true with Newtons Second Law , so in our case of free damped oscillator it not following is not causal , therefore we can say for sure that our motion is begin defined by a second order ODE for sure .
+ 
+ Now since we know that its a Second order ODE we need two initial condition to get the exact solution of the motion 
+ % so we can put an oscillator at any position and with any velocity to get an particular motion which result in a given motion this is result which is apparent due to $x$ and $\dot{x}$ begin independent .
+\\
+ 
+ \textbf{II$^{nd}$ method}\\
+ 
+We Know by observation of fundamental forces they can only depend on the variables the motion depend upon thus the set is $ \{ x , \dot{x}, \ddot{x} , \dddot{x} , \ldots ,\dot{x^n} \} $ where $\dot{x^n} = \dfrac{d^nx}{dt^n} $ and we know that from pervious result  $P<0$ for $F_d$ .
+We know , $ P = F \cdot v$ and $ v =\dot{x} $
+
+
+\begin{equation}
+\label{general_power_relation}
+    \implies P = F \cdot \dot{x}
+\end{equation}
+
+Now if we assume $F_d$ to be proportional to constant $a$ then we get :-
+\begin{align*}
+    F_d \propto a\\
+    F_d = -\gamma a\\
+\end{align*}
+
+putting this result in \eqref{gen_diff_FDO_form} we get:-
+\begin{align*}
+    m \dfrac{d^2x}{dt^2} &= -kx +F_{damping}\\
+    m \dfrac{d^2x}{dt^2} &= -kx + (-\gamma a) \\
+  m \dfrac{d^2x}{dt^2} &+ kx = -\gamma a \\
+\end{align*}
+This is equation is nothing but an equation of SHM with a different starting point so the assumption is not able to predict the correct damping equation .
+
+Next we try assume  $F_d$ to be proportional to $x$ then we get :-
+\begin{align*}
+    F_d \propto x \\
+    F_d = -\gamma x\\
+\end{align*}
+substituting this relation in \eqref{gen_diff_FDO_form} we get:-
+\begin{align*}
+    m \dfrac{d^2x}{dt^2} &= -kx + (-\gamma x) \\
+  m \dfrac{d^2x}{dt^2} &+ kx + \gamma x = 0 \\
+  m \dfrac{d^2x}{dt^2} &+ x ( k+ \gamma)  = 0 
+\end{align*} 
+Which is again nothing but a equation of SHM with a new spring constant so our assumption again fails to predict correct damping equation .
+
+Finally assuming  $F_d$ to be proportional to $\dot{x}$  we get :-
+\begin{align*}
+    F_d \propto \dot{x} \\
+    F_d = -\gamma \dot{x}\\
+\end{align*}
+substituting this relation in \eqref{gen_diff_FDO_form} we get:-
+\begin{align*}
+    m \dfrac{d^2x}{dt^2} &= -kx + (-\gamma \dot{x}) \\
+  m \dfrac{d^2x}{dt^2} &+ kx + \gamma \dot{x} = 0 \\
+  m \dfrac{d^2x}{dt^2} &+ \gamma \dot{x} + kx  = 0 
+\end{align*} 
+
+checking if $P <0 $ using \eqref{general_power_relation} we see:
+\begin{align*}
+    P &= F \cdot \dot{x} \\
+    P &= F_d \cdot \dot{x}\\
+      &= (-\gamma \dot{x}) \cdot \dot{x}\\
+      &= -\gamma (\dot{x})^2
+\end{align*}
+So $P <0$ $\forall$ $t > 0$ given $\gamma >0 $ . Thus we can say for sure that $ F_d = -\gamma x$ is a correct relation for damping but we still can't conclude that it is the only relation for damping. For that we continue our analysis of assuming $F_d \propto$ higher order derivative of $x$ . Without doing explicit math for $F_d \propto \ddot{x}$ we can see that after substituting this relation in \eqref{gen_diff_FDO_form} the coefficient of $\ddot{x}$ in \eqref{gen_diff_FDO_form} $m$ will be added by the term $\gamma$ from $F_d$ which means it is nothing but SHM equation for different mass system .\\ So we move on to the next relation $F_d \propto \dddot{x}$ which is where our analysis gets interesting :-
+\begin{align*}
+    F_d \propto \ddot{x}\\
+    F_d =\gamma \ddot{x}
+\end{align*}
+substituting this relation in \eqref{gen_diff_FDO_form} and after simplifying we get:-
+\begin{align*}
+    m \dfrac{d^2x}{dt^2} &+ \gamma \dddot{x} + kx  = 0
+\end{align*}
+checking if $P <0 $ using \eqref{general_power_relation} we see:
+\begin{align*}
+    P &= F_d \cdot \dot{x}\\
+      &= (-\gamma \dddot{x}) \cdot \dot{x}\\
+      &= -\gamma (\dot{x}) (\dddot{x})\\
+\end{align*}
+Here we see $ P = -\gamma (\dot{x}) (\dddot{x}) $ from which we can't guarantee  $\forall$ $t>0$ $P<0$ that is the system for all the time it may or may not be dissipative thus we can say for sure that any relation other than the velocity will not be able to hold our requirement for $P<0$.
+But can't we construct some multiplicative combination of the elements of the set of variables ? No we can't because we have another constrain which is linearity . We have to keep the \eqref{gen_diff_FDO_form} linear thus we can only take linear combination of the elements from the set of variables . 
+
+
+\subsection{Analytical Solution }
+As established at the beginning of this section, \eqref{final_FDO_form} is a form of Linear Differential Equation \eqref{gen_diff_FDO_form}. In mathematics, such equations are commonly solved by applying the \gls{Laplace Transform}.To get an analytical solution to \eqref{final_FDO_form} we take its Laplace Transform .
+\begin{align*}
+    m\ddot{x} + \gamma \dot{x} + kx &= 0 \\
+    \ddot{x} + \frac{\gamma}{m} \dot{x} + \frac{k}{m}x &= 0
+\end{align*}
+Applying the Laplace transform to the terms of the normalized equation, we obtain the following relations:
+\begin{align}
+    \ddot{x} &\quad \xrightarrow{\mathcal{L}} \quad s^2 X(s) - s \cdot x(0) - \dot{x}(0) \label{eq:laplace_ddx} \\[8pt]
+    \dot{x}  &\quad \xrightarrow{\mathcal{L}} \quad s X(s) - x(0) \label{eq:laplace_dx} \\[8pt]
+    x        &\quad \xrightarrow{\mathcal{L}} \quad X(s) \label{eq:laplace_x}
+\end{align}
+Where $x(0)$ and $\dot{x}(0)$ are the initial position and the velocity of the motion, substituting all these back in the original equation we get:-
+\begin{align*}
+\left( s^2 X(s) - s \cdot x(0) - \dot{x}(0) \right) + \frac{\gamma}{m} \left( s X(s) - x(0) \right) + \frac{k}{m} X(s) &= 0 \\[10pt]
+X(s) \left( s^2 + \frac{\gamma}{m} s + \frac{k}{m} \right) - x(0) \left( s + \frac{\gamma}{m} \right) - \dot{x}(0) &= 0 \\[10pt]
+X(s) = \frac{\dot{x}(0) + x(0) \left( s + \frac{\gamma}{m} \right)}{s^2 + \frac{\gamma}{m} s + \frac{k}{m}}&
+\end{align*}
+Doing the partial fraction decomposition of $X(s)$, we first identify the roots of the characteristic equation $s^2 + \frac{\gamma}{m}s + \frac{k}{m} = 0$. Let these roots be $s_1$ and $s_2$. We can then write:
+
+\begin{equation*}
+    X(s) = \frac{\dot{x}(0) + x(0) \left( s + \frac{\gamma}{m} \right)}{(s - s_1)(s -s_2)} = \frac{A}{s - s_1} + \frac{B}{s - s_2}
+\end{equation*}
+
+Where the constants $A$ and $B$ are according to residue method :-
+\begin{align*}
+    A &= \lim_{s \to s_1} (s - s_1) X(s) \\
+      &= \lim_{s \to s_1} (s - s_1)\left(\frac{\dot{x}(0) + x(0) \left( s + \frac{\gamma}{m} \right)}{(s - s_1)(s - s_2)}\right)\\
+      &=\lim_{s \to s_1}\left(\frac{\dot{x}(0) + x(0) \left( s + \frac{\gamma}{m} \right)}{s - s_2}\right)\\
+      &=\frac{\dot{x}(0) + x(0) \left( s_1 + \frac{\gamma}{m} \right)}{s_1 - s_2}\\
+    B &= \lim_{s \to s_2} (s - s_2) X(s)\\
+      &= \lim_{s \to s_2} (s - s_2)\left(\frac{\dot{x}(0) + x(0) \left( s + \frac{\gamma}{m} \right)}{(s - s_1)(s - s_2)}\right)\\
+      &=\lim_{s \to s_2}\left(\frac{\dot{x}(0) + x(0) \left( s + \frac{\gamma}{m} \right)}{s - s_1}\right)\\
+      &=\frac{\dot{x}(0) + x(0) \left( s_2 + \frac{\gamma}{m} \right)}{s_2 - s_1}
+\end{align*}
+Since we know $\dfrac{1}{s-a}$ is the Laplace transform of $e^{at}$ in the time domain so knowing this fact we can obtain the time domain solution for $X(s)$ as follows :-
+\begin{align*}
+    X(s) &= \frac{A}{s - s_1} + \frac{B}{s - s_2} \\[10pt]
+    \mathcal{L}^{-1} \{ X(s) \} &= \mathcal{L}^{-1} \left\{ \frac{A}{s - s_1} \right\} + \mathcal{L}^{-1} \left\{ \frac{B}{s - s_2} \right\} \\[10pt]
+    x(t) &= A e^{s_1 t} + B e^{s_2 t}
+\end{align*}
+Substituting the constants $A$ and $B$ back into the expression, we obtain the general solution:
+\begin{equation}
+\label{eq:solution_FDO}
+    x(t) = \left( \frac{\dot{x}(0) + x(0) ( s_1 + \frac{\gamma}{m} )}{s_1 - s_2} \right) e^{s_1 t} + \left( \frac{\dot{x}(0) + x(0) ( s_2 + \frac{\gamma}{m} )}{s_2 - s_1} \right) e^{s_2 t}
+\end{equation}
+
+Assuming $s_1=\dfrac{-\frac{\gamma}{m}+\sqrt{\left(\frac{\gamma}{m} \right)^2-4\frac{k}{m}}}{2}$ and $s_2=\dfrac{-\frac{\gamma}{m}-\sqrt{\left(\frac{\gamma}{m} \right)^2-4\frac{k}{m}}}{2}$ .\\
+If we observe this solution we can get a very important condition which is when $s_1=s_2$ which is possible when the discriminant is equal to $0$ which is possible when :-
+\begin{align*}
+    \left(\frac{\gamma}{m} \right)^2 - 4\frac{k}{m} &= 0 \\[8pt]
+    \left(\frac{\gamma}{m} \right)^2 &= 4\frac{k}{m} \\[8pt]
+    \gamma^2 &= 4km \\[8pt]
+    \gamma_c &= 2\sqrt{km}
+\end{align*}
+This represents the \textbf{critical damping} condition. At this specific value, the system ceases to exhibit oscillatory behavior and instead returns to its equilibrium position in the shortest possible time. This transition is evident when examining the roots $s_{1,2}$ in the general solution \eqref{eq:solution_FDO}. 
+
+When the discriminant is negative, i.e., $\left(\frac{\gamma}{m} \right)^2 - 4\frac{k}{m} < 0$, the roots are complex conjugates. According to Euler's formula, these complex exponents produce sinusoidal terms, resulting in an \textbf{underdamped} (oscillatory) response. However, when $\left(\frac{\gamma}{m} \right)^2 - 4\frac{k}{m} \geq 0$, the roots are purely real. This leads to \textbf{overdamped} or \textbf{critically damped} behavior, where the solution consists of purely decaying exponentials that approach the equilibrium position without oscillation.
+
+
+
+\section{Forced Damped Oscillator}
+We have seen how a free damped oscillator evolves purely from a given set of initial conditions without external interference. If we now drive this system with an external harmonic force, we discover interesting new properties, all while keeping the differential equation linear. To get the equation of motion we can draw a FBD. %have a simple FBD here
+
+Analyzing the setup we see:
+\begin{align*}
+    \sum F_{all} &= ma\\[8pt]
+    F_{ext}-kx-\gamma\dot{x} &= ma\\[8pt]
+    m\ddot{x} + kx+\gamma\dot{x} &= F_{ext}\\[8pt]
+\end{align*}
+For External Harmonic forcing we let $F_{ext} = F_0\cos(\omega t)$. %Choice of cos(wt) made clear for Laplace transform
+\begin{equation}
+\label{equation of Harmonic forced oscillator}
+     m\ddot{x} +\gamma\dot{x} + kx =  F_0\cos(\omega t)\\[8pt]
+\end{equation}
+
+\subsection{Analytical Solution}
+To obtain the solution to \eqref{equation of Harmonic forced oscillator} we again take the Laplace transform:
+Using the general results \eqref{eq:laplace_ddx}, \eqref{eq:laplace_dx} and \eqref{eq:laplace_x} we get:
+\begin{align*}
+    \text{LHS} &=  m(s^2 X(s) - s \cdot x(0) - \dot{x}(0)) + \gamma(X(s) - x(0))+k(X(s))\\ 
+               &= X(s) \left( s^2 + \frac{\gamma}{m} s + \frac{k}{m} \right) - x(0) \left( s + \frac{\gamma}{m} \right) - \dot{x}(0) \\[10pt]
+    \text{RHS} &=\dfrac{F_0s}{(s^2+\omega^2)}
+\end{align*}
+Equating the LHS and RHS we get:
+\begin{align*}
+    X(s) \left( s^2 + \frac{\gamma}{m} s + \omega_0^2 \right) - x(0) \left( s + \frac{\gamma}{m} \right) - \dot{x}(0) &= \frac{F_0 s}{s^2 + \omega^2} \\[15pt]
+    X(s) \left( s^2 + \frac{\gamma}{m} s + \omega_0^2 \right) &= \frac{F_0 s}{s^2 + \omega^2} + x(0) \left( s + \frac{\gamma}{m} \right) + \dot{x}(0) \\[15pt]
+    X(s) = \underbrace{\frac{F_0 s}{(s^2 + \omega^2)\left( s^2 + \frac{\gamma}{m} s + \omega_0^2 \right)}}_{\text{Forced Response}} &+ \underbrace{\frac{x(0) \left( s + \frac{\gamma}{m} \right) + \dot{x}(0)}{s^2 + \frac{\gamma}{m} s + \omega_0^2}}_{\text{Natural Response}}
+\end{align*}
+The solution to the natural response has been already discussed in the previous section. Here, we focus on the forced response. The forced response term, $\Phi(s)$, can be decomposed into partial fractions assuming $\gamma \neq 0$ and the four distinct roots as $s_1, \dots, s_4$ with $s_1, s_2$ being the roots of the quadratic equation, and $s_3, s_4 = \pm i\omega$ being the roots of the driving force denominator:
+
+\begin{equation*}
+    \Phi(s) = \frac{F_0 s}{(s^2 + \omega^2)\left( s^2 + \frac{\gamma}{m} s + \omega_0^2 \right)} = \sum_{i=1}^{4} \frac{A_i}{s - s_i}
+\end{equation*}
+
+where the coefficients $A_i$ are determined using the residue method:
+\begin{align*}
+    A_1 &= \lim_{s \to s_1} (s - s_1) \Phi(s) & A_3 &= \lim_{s \to i\omega} (s - i\omega) \Phi(s) \\
+        &= \dfrac{F_0 s_1}{(s_1 - s_2)(s_1^2 + \omega^2)} & &= \dfrac{F_0}{2(i\omega - s_1)(i\omega - s_2)} \\[12pt]
+    A_2 &= \lim_{s \to s_2} (s - s_2) \Phi(s) & A_4 &= \lim_{s \to -i\omega} (s + i\omega) \Phi(s) \\
+        &= \dfrac{F_0 s_2}{(s_2 - s_1)(s_2^2 + \omega^2)} & &= \dfrac{F_0}{2(-i\omega - s_1)(-i\omega - s_2)}
+\end{align*}
+
+Taking the inverse Laplace Transform we get:
+\begin{align*}
+    \Phi(s) &= \sum_{i=1}^{4} \frac{A_i}{s - s_i} \\[10pt]
+    \mathcal{L}^{-1} \left\{ \Phi(s) \right\} &= \mathcal{L}^{-1} \left\{ \sum_{i=1}^{4} \frac{A_i}{s - s_i} \right\} \\[10pt]
+    \phi(t) &= \sum_{i=1}^{4} A_i e^{s_i t}
+\end{align*}
+Substituting all the constants value we get the final equation of $x(t)$ as:
+\begin{equation}
+\label{eq:Forced harmonic sol}
+\begin{split}
+    x(t) &= \underbrace{
+        \begin{aligned}
+            &\left(\frac{F_0 s_1}{(s_1 - s_2)(s_1^2 + \omega^2)}\right)e^{s_1t} + \left(\frac{F_0 s_2}{(s_2 - s_1)(s_2^2 + \omega^2)}\right)e^{s_2t} \\
+            &+ \left(\frac{F_0}{2(i\omega - s_1)(i\omega - s_2)}\right)e^{i\omega t} + \left(\frac{F_0}{2(s_1 + i\omega)(s_2 + i\omega)}\right)e^{-i\omega t}
+        \end{aligned}
+    }_{\text{Forced Response}} \\[15pt]
+    &\quad + \underbrace{
+        \left( \frac{\dot{x}(0) + x(0) ( s_1 + \frac{\gamma}{m} )}{s_1 - s_2} \right) e^{s_1 t} + \left( \frac{\dot{x}(0) + x(0) ( s_2 + \frac{\gamma}{m} )}{s_2 - s_1} \right) e^{s_2 t}
+    }_{\text{Natural Response}}
+\end{split}
+\end{equation}
+This general solution contains many terms, making it difficult to identify physical patterns analytically; therefore, we must simplify the expression further. We know that when the exponent is purely imaginary ($e^{\pm i\omega t}$), regardless of the pre-exponential coefficient, it represents circular motion in the complex plane. 
+
+In the case of an underdamped system, the roots $s_1$ and $s_2$ possess negative real parts. The corresponding terms represent exponentially decreasing circular motion that decays over time and eventually ceases to contribute to the final motion. For this reason, we define this behavior as \textbf{Transient}, meaning these terms are only prevalent for a short duration following the initial state. Conversely, the persistent terms are categorized as the \textbf{Steady-State} response. We therefore group the terms as follows:
+
+\begin{align*}
+    x(t) &= x_{tr}(t) + x_{ss}(t) \\[10pt]
+    \text{where:} \\
+    x_{tr}(t) &= \underbrace{\left[ \frac{F_0 s_1}{(s_1 - s_2)(s_1^2 + \omega^2)} + \frac{\dot{x}(0) + x(0) ( s_1 + \frac{\gamma}{m} )}{s_1 - s_2} \right] e^{s_1 t}}_{\text{Transient Part 1}} \\
+    &\quad + \underbrace{\left[ \frac{F_0 s_2}{(s_2 - s_1)(s_2^2 + \omega^2)} + \frac{\dot{x}(0) + x(0) ( s_2 + \frac{\gamma}{m} )}{s_2 - s_1} \right] e^{s_2 t}}_{\text{Transient Part 2}} \\[15pt]
+    x_{ss}(t) &= \underbrace{\left(\frac{F_0}{2(i\omega - s_1)(i\omega - s_2)}\right)e^{i\omega t} + \left(\frac{F_0}{2(s_1 + i\omega)(s_2 + i\omega)}\right)e^{-i\omega t}}_{\text{Steady-State Response}}
+\end{align*}
+This represents a closed solution for equation \eqref{equation of Harmonic forced oscillator}, but what is the final amplitude of our oscillator? To answer this we have to simplify the Steady State Response more.
+
+\subsection{Simplification of the Steady-State Response}
+
+\begin{equation*}
+    x_{ss}(t) = \left(\frac{F_0}{2(i\omega - s_1)(i\omega - s_2)}\right)e^{i\omega t} + \left(\frac{F_0}{2(s_1 + i\omega)(s_2 + i\omega)}\right)e^{-i\omega t}
+\end{equation*}
+
+To simplify this, we recognize that the denominator is the evaluation of the characteristic polynomial $P(s) = (s - s_1)(s - s_2) = s^2 + \frac{\gamma}{m}s + \omega_0^2$ at $s = i\omega$. Substituting this value, we obtain:
+\begin{align*}
+    (i\omega - s_1)(i\omega - s_2) &= (i\omega)^2 + \frac{\gamma}{m}(i\omega) + \omega_0^2 \\
+    &= (\omega_0^2 - \omega^2) + i\left(\frac{\gamma \omega}{m}\right)
+\end{align*}
+Similarly substituting $s=-i\omega$ in the characteristic equation we get:
+\begin{align*}
+    (-i\omega - s_1)(-i\omega - s_2) &= (-i\omega)^2 + \frac{\gamma}{m}(-i\omega) + \omega_0^2 \\
+    &= (\omega_0^2 - \omega^2) - i\left(\frac{\gamma \omega}{m}\right)
+\end{align*}
+For this to represent the steady state solution we need to take the real part of both of these terms for that we first rationalize the coefficients first:
+\begin{align*}
+    \dfrac{1}{(\omega_0^2 - \omega^2) + i\left(\frac{\gamma \omega}{m}\right)} &=\dfrac{(\omega_0^2 - \omega^2) - i\left(\frac{\gamma \omega}{m}\right)}{\left((\omega_0^2 - \omega^2) + i\left(\frac{\gamma \omega}{m}\right)\right)\cdot\left((\omega_0^2 - \omega^2) - i\left(\frac{\gamma \omega}{m}\right)\right)} \\
+    &=\dfrac{(\omega_0^2 - \omega^2) - i\left(\frac{\gamma \omega}{m}\right)}{(\omega_0^2 - \omega^2)^2+\left(\frac{\gamma \omega}{m}\right)^2}
+\end{align*}
+Substituting these into the steady state equation we get:
+\begin{align*}
+ x_{ss}(t) = \left(\frac{F_0\left((\omega_0^2 - \omega^2) - i\left(\frac{\gamma \omega}{m}\right)\right)}{
+ 2\left((\omega_0^2 - \omega^2)^2+\left(\frac{\gamma \omega}{m}\right)^2\right)}\right)e^{i\omega t} + \left(\frac{F_0\left((\omega_0^2 - \omega^2) + i\left(\frac{\gamma \omega}{m}\right)\right)}{2\left((\omega_0^2 - \omega^2)^2+\left(\frac{\gamma \omega}{m}\right)^2\right)}\right)e^{-i\omega t}
+\end{align*}
+
+Collecting only the real part by using the identity $e^{\pm i\omega t} = \cos(\omega t) \pm i \sin(\omega t)$, we observe that the imaginary terms cancel out:
+\begin{align*}
+ x_{ss}(t) &= \frac{F_0}{2\left[(\omega_0^2 - \omega^2)^2+\left(\frac{\gamma \omega}{m}\right)^2\right]} \Bigg[ \left( (\omega_0^2 - \omega^2) - i\frac{\gamma \omega}{m} \right) (\cos\omega t + i\sin\omega t) \\
+ &\quad + \left( (\omega_0^2 - \omega^2) + i\frac{\gamma \omega}{m} \right) (\cos\omega t - i\sin\omega t) \Bigg] \\[10pt]
+ &= \frac{F_0}{(\omega_0^2 - \omega^2)^2+\left(\frac{\gamma \omega}{m}\right)^2} \left[ (\omega_0^2 - \omega^2)\cos\omega t + \left(\frac{\gamma \omega}{m}\right)\sin\omega t \right]
+\end{align*}
+
+To express this in the standard form $x_{ss}(t) = A \cos(\omega t - \delta)$, we define:
+\begin{equation}
+\label{Amp and phase response for FDO}
+    A = \frac{F_0/m}{\sqrt{(\omega_0^2 - \omega^2)^2 + \left(\frac{\gamma \omega}{m}\right)^2}} \quad \text{and} \quad \delta = \tan^{-1}\left( \frac{\gamma \omega/m}{\omega_0^2 - \omega^2} \right)
+\end{equation}
+
+Which yields the final steady-state response:
+\begin{equation}
+    \label{eq:final_steady_state}
+    x_{ss}(t) = A \cos(\omega t - \delta)
+\end{equation}
+
+
+\section{Section Summary: The Limits of Linearity}
+
+In this section, we have established a complete analytical framework for linear oscillators. By justifying the damping term through energy dissipation requirements [cite: 23, 24] and building intuition for Laplace transform, we successfully decomposed the system's response into its components. 
+
+Key observations include:
+\begin{itemize}
+    \item The system's inherent behavior (natural response) is governed by the characteristic roots $s_1$ and $s_2$, which determine the damping regime[cite: 149, 172].
+    \item External harmonic forcing introduces a persistent steady-state response that is independent of initial conditions[cite: 179].
+    \item The Principle of Superposition allows us to treat these components as independent, additive entities[cite: 15, 16, 217].
+\end{itemize}
+
+While these linear models accurately describe small-amplitude oscillations, they fail to account for systems where the restoring or dissipative forces do not scale proportionally with displacement or velocity. This necessity for a more generalized framework leads us to the study of \textbf{Non-Linear Oscillators}.
+\newpage
+%-------------------------------------------%
+
+
+
+
+
+
+\chapter{Weakly Non Linear Oscillators}
+\section{Introduction}
+In nature there is a very unanimous breaking of the most fundamental behavior of linear oscillators which is superposition principle . This is best summed up by Prof. S. Strogatz \say{If you listen to your two favorite songs, you won't get double the pleasure!} . Due to breaking of this very key behavior we can't implement the analysis we did before and thus making most of the Non Linear differential Equations impossible or very hard to solve, So here we are going to study  Oscillators which are widely taught in literature which do have a closed form solution which we can deduce by some mathematical techniques. 
+
+\subsubsection{Types of Oscillators}
+In this section, we are going to see nonlinear equations that are of the form  $$\ddot{x} +x+\epsilon h(x,\dot{x}) = 0$$ 
+where,\qquad $0<\epsilon<<1$ and $h(x,\dot{x})$ is an arbitrary smooth function. These functions represent a small perturbation of the linear oscillator $\dot{x}+x=0$ and are therefore called weakly nonlinear oscillators. Some examples are :-
+\begin{itemize}
+    \item Duffing Equation $$\ddot{x}+x+\epsilon(x^3) = 0$$
+    \item Van der Pol Equation $$\ddot{x}+x+\epsilon(x^2-1)\dot{x} = 0$$
+    \item Rayleigh Duffing Equation $$\ddot{x}+x+\epsilon(\frac{1}{3}\dot{x}^3-\dot{x}) = 0$$
+\end{itemize}
+
+These are common examples of weakly nonlinear oscillators that have been studied thoroughly in the standard literature . These equation are a very special case which doesn't have any damping term or any forcing term, thus to have a more generalized result, we will first analysis the general equation with the mentioned modification and then use the results we find on the three example equation to get an understanding of some the general properties of the nonlinear oscillators.  
+
+\section{General Analysis}
+
+Here we define a general model for a single block system with general non-linear stiffness and damping. We seek an approximate solution to the governing equation:
+\begin{equation}
+ \label{gen_eq_non-linear}
+  m\ddot{x} + sx + k\dot{x} + s_{\alpha}x|x|^{\alpha-1} + k_{\beta}\dot{x}|\dot{x}|^{\beta -1} = F_0 \cos(\omega_g t)
+\end{equation}
+
+Assuming a weakly non-linear regime, we ignore higher harmonics and assume a steady-state solution composed of conjugate pairs. Let $\theta = \omega_g t + \phi$. The displacement and its derivatives are:
+\begin{align*}
+    x(t) &= A e^{i\theta} + A e^{-i\theta} \\
+    \dot{x}(t) &= i\omega_g A e^{i\theta} - i\omega_g A e^{-i\theta} \\
+    \ddot{x}(t) &= -\omega_g^2 A e^{i\theta} - \omega_g^2 A e^{-i\theta}
+\end{align*}
+
+Substituting these explicit sums into \eqref{gen_eq_non-linear}, we obtain the full force balance equation :
+\begin{align*}
+\label{substituted non linear equation}
+    m \left[ -\omega_g^2 A (e^{i\theta} + e^{-i\theta}) \right] 
+    &+ s \left[ A (e^{i\theta} + e^{-i\theta}) \right] 
+    + k \left[ i\omega_g A (e^{i\theta} - e^{-i\theta}) \right] \\
+    &+ s_{\alpha} A^{\alpha} (e^{i\theta} + e^{-i\theta}) \left|  (e^{i\theta} + e^{-i\theta}) \right|^{\alpha-1} 
+    + k_{\beta} (Ai\omega_g)^{\beta} (e^{i\theta} - e^{-i\theta}) \left|  (e^{i\theta} - e^{-i\theta}) \right|^{\beta-1} 
+    = F_0 \cos(\omega_g t)
+\end{align*}
+
+Why did we do this step what do we hope to achieve from this ? We assumed the solution to be in the form of a  $A e^{i\theta} + A e^{-i\theta}$ cause of a very simple reasoning that the non-linearity is very small and can be ignored then we know from the previous section we get a steady state solution in the aforementioned form. Now to answer the main question how do we find the Amplitude($A$) and the phase($\phi$) For this we will apply a method called as \gls{Harmonic Balance} which simplifies this huge equation and will help us get a steady state solution with the natural frequency $(\omega_0)=\omega_g$
+
+But now the issue are the small nonlinearities how do we account for them.  We expand the non-linear terms by apply the complex form of the \textbf{Fourier Series} and isolate the coefficient of the fundamental frequency ($\omega_g$).
+
+The Fourier series (in the time domain) for the fundamental harmonic is given by:
+
+\begin{align*}
+    f(t) & = \sum\limits_{n=- \infty}^{\infty} c_n e^{i(\omega_g n)t} \\
+    c_n  & = \frac{1}{T}\int\limits_{0}^{T} f(t)e^{i(-\omega_g n)t} dt \\
+    c_1 &= \frac{1}{T} \int_{0}^{T} f(t) e^{-i\omega_g t} dt
+\end{align*}
+
+\subsubsection{Solving the nonlinearity}
+
+We analyze the non-linear terms using the Fourier series approximation. Let the non-linear stiffness term be $f_1(t)$ and the non-linear damping term be $f_2(t)$. 
+Based on our assumed solution $x(t) = A(e^{i\theta} + e^{-i\theta})$, the terms are defined as:
+\begin{align*}
+    f_1(t) &= (e^{i\theta} + e^{-i\theta}) \left| (e^{i\theta} + e^{-i\theta}) \right|^{\alpha-1} \\
+    f_2(t) &= (e^{i\theta} - e^{-i\theta}) \left| (e^{i\theta} - e^{-i\theta}) \right|^{\beta-1}
+\end{align*}
+where $\theta = \omega_g t + \phi$.
+
+\paragraph{1. Stiffness Term ($f_1$)}
+To reduce the modulus, we use Euler's Identity $e^{i\theta} + e^{-i\theta} = 2\cos\theta$:
+\begin{align*}  
+    f_1(t) &= (2\cos\theta) \left| 2\cos\theta \right|^{\alpha-1} \\
+           &= 2^\alpha \cos\theta |\cos\theta|^{\alpha-1}
+\end{align*}
+We approximate this function using the Fourier series $f_1(t) \approx c_0 + c_1 e^{i\omega_g t} + c_{-1} e^{-i\omega_g t}$.
+
+First, we calculate the mean value $c_0$. Using the period $T = 2\pi/\omega_g$ and converting the variable to $\theta$:
+\begin{align*}
+    c_0 &= \frac{1}{T}\int_{0}^{T} f_1(t) dt \\
+        &= \frac{2^\alpha}{2\pi} \int_{0}^{2\pi} \cos\theta |\cos\theta|^{\alpha-1} d\theta
+\end{align*}
+Splitting the integral into quadrants:
+\begin{align*}
+    c_0 &= \frac{2^\alpha}{2\pi} \left( \int_{0}^{\frac{\pi}{2}} \cos^\alpha\theta d\theta + \int_{\frac{\pi}{2}}^{\pi} \cos\theta |\cos\theta|^{\alpha-1} d\theta + \int_{\pi}^{\frac{3\pi}{2}} \cos\theta |\cos\theta|^{\alpha-1} d\theta + \int_{\frac{3\pi}{2}}^{2\pi} \cos^\alpha\theta d\theta \right)
+\end{align*}
+Noting that $\cos\theta$ is negative in the 2nd and 3rd quadrants, $|\cos\theta|^{\alpha-1} = (-\cos\theta)^{\alpha-1}$. Thus:
+\begin{align*}
+    c_0 &= \frac{2^\alpha}{2\pi} \left( \int_{0}^{\frac{\pi}{2}} \cos^\alpha\theta d\theta + \int_{\frac{\pi}{2}}^{\pi} (-1)^{\alpha-1} \cos^\alpha\theta d\theta + \dots \right)
+\end{align*}
+By substituting variables ($u = \theta - \pi/2$, etc.) to shift all limits to the first quadrant, we find that the negative lobes exactly cancel the positive lobes. Thus:
+\begin{equation}
+    c_0 = 0
+\end{equation}
+
+Now we evaluate the fundamental harmonic coefficient $c_1$:
+\begin{align*}
+    c_1 &= \frac{1}{T} \int_{0}^{T} f_1(t) e^{-i\omega_g t} dt \\
+        &= \frac{2^\alpha e^{i\phi}}{2\pi} \int_{0}^{2\pi} \cos\theta |\cos\theta|^{\alpha-1} (\cos\theta - i\sin\theta) d\theta
+\end{align*}
+Due to symmetry, the integral involving $\sin\theta$ (an odd function over the period) vanishes. We are left with the real part:
+\begin{align*}
+    c_1 &= \frac{2^\alpha e^{i\phi}}{2\pi} \int_{0}^{2\pi} \cos^2\theta |\cos\theta|^{\alpha-1} d\theta \\
+        &= \frac{2^\alpha e^{i\phi}}{2\pi} \int_{0}^{2\pi} |\cos\theta|^{\alpha+1} d\theta
+\end{align*}
+Since $|\cos\theta|^{\alpha+1}$ is positive and symmetric in all four quadrants, the integral is simply $4 \times$ the first quadrant. Using the Wallis Integral formula:
+\begin{align*}
+    c_1 &= \frac{2^\alpha e^{i\phi}}{2\pi} \cdot 4 \int_{0}^{\frac{\pi}{2}} \cos^{\alpha+1}\theta \, d\theta \\
+        &= \frac{2^{\alpha+1} e^{i\phi}}{\pi} \left[ \frac{\sqrt{\pi}}{2} \frac{\Gamma\left(\frac{\alpha+2}{2}\right)}{\Gamma\left(\frac{\alpha+3}{2}\right)} \right]
+\end{align*}
+Thus, the complex stiffness coefficient is:
+\begin{equation}
+    c_1 = \frac{2^\alpha e^{i\phi}}{\sqrt{\pi}} \frac{\Gamma\left(\frac{\alpha+2}{2}\right)}{\Gamma\left(\frac{\alpha+3}{2}\right)}
+\end{equation}
+
+\paragraph{2. Damping Term ($f_2$)}
+Now we analyze $f_2(t) = (e^{i\theta} - e^{-i\theta}) \left| (e^{i\theta} - e^{-i\theta}) \right|^{\beta-1}$.
+Using Euler's identity $e^{i\theta} - e^{-i\theta} = 2i\sin\theta$:
+\begin{align*}
+    f_2(t) &= (2i\sin\theta) \left| 2i\sin\theta \right|^{\beta-1} \\
+           &= (2i\sin\theta) \left( 2^{\beta-1} |\sin\theta|^{\beta-1} \right) \quad \text{(Since } |2i|=2 \text{)} \\
+           &= i 2^\beta \sin\theta |\sin\theta|^{\beta-1}
+\end{align*}
+We first check for $c_0$ in the damping term:
+\begin{align*}
+    c_0 &= \frac{1}{T} \int_{0}^{T} f_2(t) dt \\
+        &= \frac{1}{2\pi} \int_{0}^{2\pi} \left( i 2^\beta \sin\theta |\sin\theta|^{\beta-1} \right) d\theta \\
+        &= \frac{i 2^\beta}{2\pi} \int_{0}^{2\pi} \sin\theta |\sin\theta|^{\beta-1} d\theta
+\end{align*}
+Splitting the integral into the four quadrants:
+\begin{align*}
+    c_0 &= \frac{i 2^\beta}{2\pi} \left( \int_{0}^{\frac{\pi}{2}} \sin^\beta\theta d\theta + \int_{\frac{\pi}{2}}^{\pi} \sin^\beta\theta d\theta + \int_{\pi}^{\frac{3\pi}{2}} (-1)^{\beta-1} \sin\theta |\sin\theta|^{\beta-1} d\theta + \int_{\frac{3\pi}{2}}^{2\pi} (-1)^{\beta-1} \sin\theta |\sin\theta|^{\beta-1} d\theta \right)
+\end{align*}
+In the 3rd and 4th quadrants ($\pi \le \theta \le 2\pi$), $\sin\theta$ is negative. Thus, $\sin\theta |\sin\theta|^{\beta-1} = -|\sin\theta|^\beta = -\sin^\beta(\theta-\pi)$.
+Substituting variables to shift limits to the first quadrant shows that the negative area in the second half of the cycle exactly cancels the positive area in the first half:
+\begin{align*}
+    \int_{\pi}^{2\pi} \sin\theta |\sin\theta|^{\beta-1} d\theta &= -\int_{0}^{\pi} \sin^\beta\theta d\theta
+\end{align*}
+Therefore:
+\begin{equation}
+    c_0 = 0
+\end{equation}
+We calculate the coefficient $c_1'$:
+\begin{align*}
+    c_1 &= \frac{1}{2\pi} \int_{0}^{2\pi} \left( i 2^\beta \sin\theta |\sin\theta|^{\beta-1} \right) e^{-i\theta} d\theta \\
+         &= \frac{i 2^\beta e^{i\phi}}{2\pi} \int_{0}^{2\pi} \sin\theta |\sin\theta|^{\beta-1} (\cos\theta - i\sin\theta) d\theta
+\end{align*}
+This splits into Real and Imaginary integrals:
+\begin{align*}
+    c_1 &= \frac{i 2^\beta e^{i\phi}}{2\pi} \left[ \underbrace{\int_{0}^{2\pi} \sin\theta |\sin\theta|^{\beta-1} \cos\theta \, d\theta}_{I_{Re}} - i \underbrace{\int_{0}^{2\pi} \sin\theta |\sin\theta|^{\beta-1} \sin\theta \, d\theta}_{I_{Im}} \right]
+\end{align*}
+
+\textbf{Real Part ($I_{Re}$):} The integrand is an odd function (anti-symmetric about $\pi$). Thus, $I_{Re} = 0$.
+
+\textbf{Imaginary Part ($I_{Im}$):} The integrand simplifies to $|\sin\theta|^{\beta+1}$, which is symmetric and positive in all four quadrants.
+\begin{align*}
+    I_{Im} &= \int_{0}^{2\pi} |\sin\theta|^{\beta+1} d\theta \\
+           &= 4 \int_{0}^{\frac{\pi}{2}} \sin^{\beta+1}\theta \, d\theta \\
+           &= 2\sqrt{\pi} \frac{\Gamma\left(\frac{\beta+2}{2}\right)}{\Gamma\left(\frac{\beta+3}{2}\right)}
+\end{align*}
+
+Substituting back into $c_1$:
+\begin{align*}
+    c_1 &= \frac{i 2^\beta e^{i\phi}}{2\pi} \left[ 0 - i \left( 2\sqrt{\pi} \frac{\Gamma\left(\frac{\beta+2}{2}\right)}{\Gamma\left(\frac{\beta+3}{2}\right)} \right) \right] \\
+         &= \frac{i 2^\beta e^{i\phi} (-i)}{\sqrt{\pi}} \frac{\Gamma\left(\frac{\beta+2}{2}\right)}{\Gamma\left(\frac{\beta+3}{2}\right)} \\
+         &= \frac{2^\beta e^{i\phi}}{\sqrt{\pi}} \frac{\Gamma\left(\frac{\beta+2}{2}\right)}{\Gamma\left(\frac{\beta+3}{2}\right)}
+\end{align*}
+\subsubsection{Master Equation}
+
+Substituting the Fourier coefficients back, we obtain the linearized approximations for the fundamental harmonic ($e^{i\theta}$):
+
+\begin{align*}
+    \text{Nonlinear Stiffness:} \quad & s_{\alpha} x |x|^{\alpha-1} \approx \left[ \frac{2^\alpha}{\sqrt{\pi}} \frac{\Gamma(\frac{\alpha+2}{2})}{\Gamma(\frac{\alpha+3}{2})} s_{\alpha} A^{\alpha} \right] e^{i\theta} + c.c. \\
+    \text{Nonlinear Damping:} \quad & k_{\beta} \dot{x} |\dot{x}|^{\beta-1} \approx \left[ i \frac{2^\beta}{\sqrt{\pi}} \frac{\Gamma(\frac{\beta+2}{2})}{\Gamma(\frac{\beta+3}{2})} k_{\beta} (A\omega_g)^{\beta} \right] e^{i\theta} + c.c.
+\end{align*}
+
+We substitute these into the equation of motion. To perform the \textbf{Harmonic Balance}, we expand the forcing term $F_0 \cos(\omega_g t) = \frac{F_0}{2} (e^{i(\theta-\phi)} + e^{-i(\theta-\phi)})$ and equate only the coefficients of $e^{i\theta}$ on both sides.
+
+This eliminates the time dependence and yields the algebraic Master Equation:
+
+\begin{equation}
+\label{eq:master_phasor}
+    \underbrace{-m\omega_g^2 A}_{\text{Inertia}} 
+    + \underbrace{i k \omega_g A}_{\text{Lin. Damp}} 
+    + \underbrace{s A}_{\text{Lin. Stiff}} 
+    + \underbrace{\mathcal{C}_{\alpha} s_{\alpha} A^{\alpha}}_{\text{Nonlin. Stiff}} 
+    + \underbrace{i \mathcal{C}_{\beta} k_{\beta} (A\omega_g)^{\beta}}_{\text{Nonlin. Damp}} 
+    = \frac{F_0}{2} e^{-i\phi}
+\end{equation}
+
+where the Gamma constants are defined for brevity as:
+\begin{align*}
+    \mathcal{C}_{\alpha} &= \frac{2^\alpha}{\sqrt{\pi}} \frac{\Gamma\left(\frac{\alpha+2}{2}\right)}{\Gamma\left(\frac{\alpha+3}{2}\right)}, \quad
+    \mathcal{C}_{\beta} = \frac{2^\beta}{\sqrt{\pi}} \frac{\Gamma\left(\frac{\beta+2}{2}\right)}{\Gamma\left(\frac{\beta+3}{2}\right)}
+\end{align*}
+\subsubsection{Amplitude and Phase Frequency Relations}
+
+Starting from the derived Master Equation (\ref{eq:master_phasor}), we first group the real and imaginary terms on the left-hand side. We define the \textbf{Effective Stiffness} $K_{eff}(A)$ and \textbf{Effective Damping} $C_{eff}(A)$ as:
+\begin{align*}
+    K_{eff}(A) &= s + \mathcal{C}_{\alpha} s_{\alpha} A^{\alpha-1} \\
+    C_{eff}(A, \omega_g) &= k + \mathcal{C}_{\beta} k_{\beta} \omega_g^{\beta-1} A^{\beta-1}
+\end{align*}
+Substituting these into the Master Equation:
+\begin{equation*}
+    \left[ (K_{eff}(A) - m\omega_g^2) + i \omega_g C_{eff}(A, \omega_g) \right] A = \frac{F_0}{2} e^{-i\phi}
+\end{equation*}
+To separate the components, we expand the right-hand side using Euler's relation $e^{-i\phi} = \cos\phi - i\sin\phi$:
+\begin{equation*}
+    \underbrace{A(K_{eff} - m\omega_g^2)}_{\text{Real Part}} + i \underbrace{A \omega_g C_{eff}}_{\text{Imaginary Part}} = \frac{F_0}{2} \cos\phi - i \frac{F_0}{2} \sin\phi
+\end{equation*}
+
+By equating the real and imaginary parts separately, we obtain two simultaneous equations:
+\begin{align*}
+    A(K_{eff} - m\omega_g^2) &= \frac{F_0}{2} \cos\phi \\
+    A \omega_g C_{eff} &= -\frac{F_0}{2} \sin\phi
+\end{align*}
+
+\paragraph{1. Phase-Frequency Relation}
+Dividing the two equations eliminates the force amplitude $F_0$ and the amplitude $A$ (from the explicit factor, though $K_{eff}$ still depends on $A$):
+\begin{equation*}
+    \tan\phi = \frac{-\frac{F_0}{2} \sin\phi}{\frac{F_0}{2} \cos\phi} = \frac{-A \omega_g C_{eff}}{A(K_{eff} - m\omega_g^2)}
+\end{equation*}
+Simplifying, we get the general phase angle equation:
+\begin{equation}
+    \phi(\omega_g, A) = \arctan\left( \frac{-\omega_g C_{eff}(A, \omega_g)}{K_{eff}(A) - m\omega_g^2} \right)
+\end{equation}
+This indicates that resonance (where the phase shift passes through $-90^\circ$) occurs when the denominator vanishes, i.e., $m\omega_g^2 = K_{eff}(A)$.
+
+\paragraph{2. Amplitude-Frequency Relation}
+To find the magnitude response, we square both equations and add them together. Using the identity $\cos^2\phi + \sin^2\phi = 1$:
+\begin{align*}
+    \left[ A(K_{eff} - m\omega_g^2) \right]^2 + \left[ A \omega_g C_{eff} \right]^2 &= \left( \frac{F_0}{2} \right)^2 (\cos^2\phi + \sin^2\phi) \\
+    A^2 \left[ (K_{eff} - m\omega_g^2)^2 + (\omega_g C_{eff})^2 \right] &= \frac{F_0^2}{4}
+\end{align*}
+Rearranging for the physical amplitude (noting that the physical displacement amplitude is $X_{max} = 2A$):
+\begin{equation}
+\label{eq:amp_response}
+    (2A) = \frac{F_0}{\sqrt{(K_{eff}(A) - m\omega_g^2)^2 + (\omega_g C_{eff}(A, \omega_g))^2}}
+\end{equation}
+
+This is the implicit \textbf{Nonlinear Frequency Response Equation}. Unlike the linear case, the terms $K_{eff}$ and $C_{eff}$ on the right-hand side depend on the amplitude $A$ itself. This equation generally results in multiple solutions for $A$ at a given frequency $\omega_g$, leading to phenomena such as \textbf{Hysteresis} and \textbf{Jump Resonance}.
+
+\section{Case Studies}
+We can use the above results to see how few Oscillator models behave for a fixed value of $\alpha$ \& $\beta$.
+
+\subsection{Duffing Oscillator}
+As mentioned before, the Duffing Oscillator is characterized by a cubic non-linear restoring force, corresponding to $\alpha=3$ and $\beta=1$ (linear damping)[cite: 242]. Substituting these into the Master Equation, we first evaluate the Gamma constant $\mathcal{C}_{3}$:
+\begin{align*}
+    \mathcal{C}_{3} &= \frac{2^3}{\sqrt{\pi}} \frac{\Gamma\left(\frac{3+2}{2}\right)}{\Gamma\left(\frac{3+3}{2}\right)} \\
+    &= \frac{8}{\sqrt{\pi}} \frac{\Gamma(2.5)}{\Gamma(3)}
+\end{align*}
+Using the property $\Gamma(2.5) = \frac{3}{4}\sqrt{\pi}$ and $\Gamma(3) = 2! = 2$:
+\begin{align*}
+    \mathcal{C}_{3} &= \frac{8}{\sqrt{\pi}} \frac{\frac{3}{4}\sqrt{\pi}}{2} = \frac{6}{2} = 3
+\end{align*}
+Substituting $\mathcal{C}_{3} = 3$ and $\beta=1$ (where $\mathcal{C}_{1}=1$) into the algebraic Master Equation (\ref{eq:master_phasor}):
+\begin{equation}
+    \left[ (s + 3s_{3}A^2 - m\omega_g^2) + i k \omega_g \right] A = \frac{F_0}{2} e^{-i\phi}
+\end{equation}
+
+The amplitude-frequency relation for the Duffing Oscillator is thus:
+\begin{equation}
+    (2A) = \frac{F_0}{\sqrt{(s + 3s_{3}A^2 - m\omega_g^2)^2 + (k\omega_g)^2}}
+\end{equation}
+
+
+
+This result shows the "hardening" spring effect common in Duffing systems. Because the effective stiffness $K_{eff} = s + 3s_{3}A^2$ increases with amplitude $A$, the resonance peak "bends" toward higher frequencies. This leads to the characteristic jump resonance and hysteresis as the driving frequency $\omega_g$ is varied.
+
+\subsection{Van der Pol Oscillator}
+The Van der Pol oscillator describes a system with non-linear damping that depends on displacement, given by the governing equation $\ddot{x} + x + \epsilon(x^2 - 1)\dot{x} = 0$[cite: 245]. 
+
+Unlike the generalized damping model $k_\beta \dot{x}|\dot{x}|^{\beta-1}$ derived earlier, the Van der Pol equation features a coupled non-linear term $f_{nl}(x, \dot{x}) = \epsilon x^2 \dot{x}$. Because it depends on both $x$ and $\dot{x}$, we apply the Harmonic Balance principle directly to this term rather than utilizing the $\mathcal{C}_\beta$ Gamma function.
+
+Substituting $x(t) = A(e^{i\theta} + e^{-i\theta})$ and $\dot{x}(t) = i\omega_g A(e^{i\theta} - e^{-i\theta})$ into the coupled term:
+\begin{align*}
+    f_{nl}(t) &= \epsilon \left[ A^2(e^{i\theta} + e^{-i\theta})^2 \right] \left[ i\omega_g A(e^{i\theta} - e^{-i\theta}) \right] \\
+              &= i\epsilon \omega_g A^3 \left( e^{2i\theta} + 2 + e^{-2i\theta} \right) \left( e^{i\theta} - e^{-i\theta} \right) \\
+              &= i\epsilon \omega_g A^3 \left( e^{3i\theta} + e^{i\theta} - e^{-i\theta} - e^{-3i\theta} \right)
+\end{align*}
+Isolating the fundamental harmonic ($e^{i\theta}$), we extract the complex coefficient for the non-linear damping:
+\begin{equation*}
+    c_{VdP} = i\epsilon \omega_g A^3
+\end{equation*}
+The linear negative damping term in the Van der Pol equation is $-\epsilon \dot{x}$, which contributes a fundamental coefficient of $-i\epsilon \omega_g A$. Combining these gives the \textbf{Effective Damping} ($C_{eff}$) for the system:
+\begin{align*}
+    C_{eff}(A) &= -\epsilon + \epsilon A^2 = \epsilon(A^2 - 1)
+\end{align*}
+Substituting this into the unforced ($F_0=0$) Master Equation to find the steady-state free vibration response:
+\begin{equation}
+    \left[ (s - m\omega_g^2) + i \omega_g \epsilon(A^2 - 1) \right] A = 0
+\end{equation}
+For a non-trivial steady-state solution ($A \neq 0$), both the real and imaginary parts must vanish independently:
+\begin{align*}
+    \text{Real:} \quad & s - m\omega_g^2 = 0 \implies \omega_g = \sqrt{\frac{s}{m}} = \omega_0 \\
+    \text{Imaginary:} \quad & \omega_g \epsilon(A^2 - 1) = 0 \implies A^2 - 1 = 0 \implies A = 1
+\end{align*}
+
+
+
+This proves that the unforced Van der Pol oscillator possesses a stable \textbf{Limit Cycle}. The physical amplitude of the system will naturally converge to $X_{max} = 2A = 2$. If the amplitude is smaller ($A < 1$), the effective damping is negative, adding energy to the system and increasing the swing. If the amplitude grows too large ($A > 1$), the effective damping becomes positive, dissipating energy and pulling the oscillation back to the stable cycle.
+We can use the above results to see how does few Oscillator models behave for a fixed value of $\alpha$ \& $\beta$.
+
+\newpage
+%-------------------------------------------%
+\chapter{Numerical Analysis}
+In this section, we solve the differential equations governing our oscillator models using computational methods. Since analytical solutions can become intractable for complex non-linear systems, we rely on numerical integration. Specifically, we implement the 4th-order Runge-Kutta (RK4) method in Python to solve the system of first-order ordinary differential equations derived from our models. The resulting dynamic trajectories are then analyzed graphically using \texttt{matplotlib}.
+
+\section{Linear Oscillator}
+While we have already derived the exact analytical solutions for the linear oscillator in previous sections, numerical simulation provides a powerful tool for rapid visualization and verification. In many practical scenarios, obtaining a graphical representation of the motion is sufficient to analyze the system's properties without deriving the full closed-form solution.
+
+\subsection{Free Damped Oscillators}
+The equation of motion for a free damped oscillator is given by:
+\begin{equation*}
+    \ddot{x} + \gamma\dot{x} + \omega_0^2 x = 0
+\end{equation*}
+This derivation was justified in Section \ref{Justification of the given motion equation}. To develop a graphical intuition for the motion described by Equation \eqref{final_FDO_form}, we implement a Python script to plot $x(t)$ vs. $t$. 
+For the purpose of this simulation, we simplify the parameters by setting the mass ($m$) to unity ($1.0$) and natural frequency squared ($\omega_0^2$) to ($100.0$) and let the damping coefficient ($\gamma$) be a .
+\begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.9\textwidth]{"Frequency = 10 and Damping = 0.1 .png"}
+        \caption{Underdamped}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+        \includegraphics[width=\textwidth]{Frequency = 10and Damping = 25.png}
+        \caption{Overdamped}
+\end{figure}
+
+\newpage
+\begin{lstlisting}[language=Python,title = { },frame=single]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def derivative(t, state):
+    x = state[0] 
+    v = state[1]
+    dxdt = v
+    dvdt = -(0.1*x + 10*v)  
+    return np.array([dxdt, dvdt])
+
+def rk4_step(t, state, h, func):
+    k1 = func(t, state)
+    k2 = func(t + 0.5*h, state + 0.5*h*k1)
+    k3 = func(t + 0.5*h, state + 0.5*h*k2)
+    k4 = func(t + h,     state + h*k3)
+
+    return state + (h/6.0) * (k1 + 2*k2 + 2*k3 + k4)
+
+t_start = 0.0
+t_end   = 100.0    
+h       = 0.01     
+N_steps = int((t_end - t_start) / h)
+
+start_positions = [1.0, 0.0, 2.0]        
+v0 = 0.0           
+
+plt.figure(figsize=(10, 6))
+
+for x0 in start_positions:
+      
+    current_state = np.array([x0, v0])
+    current_t = t_start
+ 
+    t_values = [current_t]
+    x_values = [x0]
+    
+    for i in range(N_steps):
+        current_state = rk4_step(current_t, current_state, h, derivative)
+        current_t += h
+        
+        t_values.append(current_t)
+        x_values.append(current_state[0])
+
+    plt.plot(t_values, x_values, label=f'Start Pos: {x0}', linewidth=2)
+
+plt.title("Simulation with 3 Different Initial Conditions")
+plt.xlabel("Time")
+plt.ylabel("Position (x)")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.axvline(0, color='black', linewidth=0.5)
+plt.show()
+\end{lstlisting}
+
+
+%-------------------------------------------%
+\subsection{Forced Damped Oscillators}
+The equation of motion for a forced damped oscillator is given by:
+\begin{equation*}
+      m\ddot{x} +\gamma\dot{x} + kx =  F_0\cos(\omega t)\\[8pt]
+\end{equation*}
+2The derivation was done in Section \ref{Justification of the given motion equation}. Here, we simulate the motion using the same numerical methods established in the previous subsection. For simplicity, we normalize the parameters such that mass ($m$) and the external force amplitude ($F_0$) are equal to unity ($1.0$), while keeping damping ($\gamma$) and stiffness ($k$) as variables.
+
+
+\begin{lstlisting}[language=Python, title={RK4 Time-Domain Simulation}, frame=single]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def derivative(t, state):
+    x, v = state
+    # Parameters chosen to match the resonance analysis below
+    m = 1.0
+    k = 25.0       # Natural freq w0 = 5 (since k/m = 25)
+    gamma = 0.5    # Light damping
+    F0 = 1.0       # Unit Force
+    omega = 5.0    # Driving at Resonance (omega = w0)
+    
+    dxdt = v
+    dvdt = (F0*np.cos(omega*t) - gamma*v - k*x) / m
+    return np.array([dxdt, dvdt])
+
+def rk4_step(t, state, h, func):
+    k1 = func(t, state)
+    k2 = func(t + 0.5*h, state + 0.5*h*k1)
+    k3 = func(t + 0.5*h, state + 0.5*h*k2)
+    k4 = func(t + h,     state + h*k3)
+    return state + (h/6.0) * (k1 + 2*k2 + 2*k3 + k4)
+
+# Simulation setup
+t_start, t_end, h = 0.0, 20.0, 0.01     
+N_steps = int((t_end - t_start) / h)
+x0, v0 = 0.0, 0.0  # Start from rest
+
+# Run Simulation
+t_values = np.linspace(t_start, t_end, N_steps + 1)
+x_values = np.zeros(N_steps + 1)
+current_state = np.array([x0, v0])
+x_values[0] = x0
+
+for i in range(N_steps):
+    current_state = rk4_step(t_values[i], current_state, h, derivative)
+    x_values[i+1] = current_state[0]
+
+# Plotting
+plt.figure(figsize=(10, 4))
+plt.plot(t_values, x_values, label=r'Response at Resonance ($\omega = \omega_0$)', linewidth=1.5)
+plt.xlabel("Time (s)")
+plt.ylabel("Position (x)")
+plt.title("Time Domain Response")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+\end{lstlisting}
+
+In the context of forced oscillations, it is crucial to analyze the \textbf{Amplitude Response}, which describes how the steady-state Amplitude ($A$) varies as a function of the driving frequency ($\omega$). This relationship, along with the \textbf{Phase Response} ($\delta$), is governed by the analytical steady-state solution derived previously:
+\begin{align*}
+ A = \frac{F_0/m}{\sqrt{(\omega_0^2 - \omega^2)^2 + \left(\frac{\gamma \omega}{m}\right)^2}} \quad \text{and} \quad \delta = \tan^{-1}\left( \frac{\gamma \omega/m}{\omega_0^2 - \omega^2} \right)
+\end{align*}
+
+\vspace{0.5cm}
+
+In the following simulation, we fix the natural frequency at $\omega_0 = 5$ units and vary the driving frequency $\omega$ across a range. We treat the damping coefficient $\gamma$ as a tunable parameter. Looking at the resulting Amplitude vs. Frequency plot (Fig. \ref{fig:amp_response}), we observe that as the driving frequency approaches the natural frequency ($\omega \to \omega_0$), the amplitude increases drastically. This phenomenon is known as \textbf{Resonance}.
+\clearpage
+\begin{figure}[htbp]
+    \centering
+    % Ensure you have this image file or the code below generates it
+    \includegraphics[width=0.9\textwidth]{Amplitude response.png} 
+    \caption{Amplitude Response for various damping coefficients.}
+    \label{fig:amp_response}
+\end{figure}
+
+\begin{lstlisting}[language=Python, title={Plotting Amplitude Response}, frame=single]
+import numpy as np
+import matplotlib.pyplot as plt
+
+w0 = 5.0          # Fixed Natural Frequency
+m = 1.0           # Mass
+F0 = 1.0          # Force Amplitude
+gmm_list = [0.5, 1.0, 2.0, 5.0] # Various damping values
+
+freq = np.linspace(0, 10, 1000) # Driving frequency range
+
+plt.figure(figsize=(8, 5))
+
+for gamma in gmm_list:
+    # Denominator from the derived formula
+    denominator = np.sqrt( (w0**2 - freq**2)**2 + (gamma*freq/m)**2 )
+    
+    # Avoid division by zero for undamped case
+    denominator[denominator == 0] = 1e-9 
+    
+    amp = (F0/m) / denominator
+    plt.plot(freq, amp, linewidth=2, label=f'$\gamma$={gamma}')
+
+plt.title(rf"Amplitude Response ($\omega_0 = {w0}$)")
+plt.xlabel(r"Driving Frequency ($\omega$)")
+plt.ylabel("Amplitude (A)")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+\end{lstlisting}
+
+\clearpage
+Similar to the amplitude, the system exhibits a \textbf{Phase Response}, representing the lag between the driving force and the system's motion. At resonance ($\omega = \omega_0$), the phase shift is exactly $90^\circ$ ($\pi/2$), regardless of damping.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Phase Response.png}
+    \caption{Phase Response showing the $90^\circ$ shift at resonance.}
+    \label{fig:phase_response}
+\end{figure}
+
+\begin{lstlisting}[language=Python, title={Plotting Phase Response}, frame=single]
+import numpy as np
+import matplotlib.pyplot as plt
+
+w0 = 5.0
+m = 1.0
+gmm_list = [0.5, 1.0, 5.0, 10.0] # Consistent damping values
+
+omega = np.linspace(0, 10, 1000)
+
+plt.figure(figsize=(8, 5))
+
+for gamma in gmm_list:
+    numerator = (gamma * omega / m) 
+    denominator = (w0**2 - omega**2)
+    
+    # arctan2 handles the quadrant correctly (0 to 180 degrees)
+    delta = np.arctan2(numerator, denominator)
+    delta_degrees = np.degrees(delta)
+
+    plt.plot(omega, delta_degrees, linewidth=2, label=f'$\gamma$={gamma}')
+
+plt.axhline(90, color='black', linestyle='--', alpha=0.5, label='Resonance ($90^\circ$)')
+plt.xlim(0, 10)
+plt.ylim(0, 180) 
+plt.title(rf"Phase Response ($\omega_0 = {w0}$)")
+plt.xlabel(r"Driving Frequency ($\omega$)")
+plt.ylabel("Phase Shift (Degrees)")
+plt.legend(loc='lower right')
+plt.grid(True, alpha=0.3)
+plt.show()
+\end{lstlisting}
+\section{Non Linear Oscillator}
+In the previous section, we saw how difficult it is to find analytical solutions for nonlinear oscillators. Even for "weakly" nonlinear systems like the Van der Pol or Duffing equations, exact formulas usually do not exist. Instead of using hard math like Rotating vector analysis or the Method of Multiple Scales, we can use numerical methods to get the answer. By writing a computer code to solve the equations, we can directly plot the motion. This gives us a "graphical intuition" of how the system behaves without needing to solve the math by hand.
+\subsection{Duffing Oscillators}
+
+\subsection{Van der Pol Oscillators}
+
+\subsection{Rayleigh Duffing Oscillators}
+
+
+%-------------------------------------------%
+\newpage
+
+\printglossary[title=Dictionary of Terms]
+
+%-------------------------------------------%
+
+%-------------------------------------------%
+\newpage
+\begin{thebibliography}{99} 
+
+\bibitem{Cine's Notes} Variational Principles in Classical Mechanics. \url{}
+\bibitem{Strogatz} Prof. Steven Strogatz.
+\bibitem{Newman} Prof. Mark Newman.
+\bibitem{Samantha} Dr. Chandan Samantha Notes.
+\bibitem{3b1b} Grant Sanderson (3Blue1Brown). \url{https://www.youtube.com/watch?v=-j8PzkZ70Lg&list=PLZHQObOWTQDNPOjrT6KVlfJuKtYTftqH6&index=6}
+\bibitem{3b1b} Grant Sanderson (3Blue1Brown). \url{https://www.youtube.com/watch?v=3d6DsjIBzJ4}
+\bibitem{Bajaj}
+\bibitem{French}
+\bibitem{diprime}
+\bibitem{Caltech} Thesis paper
+\bibitem{}Rotating vector solving method applied for nonlinear
+oscillator
+
+\end{thebibliography}
+%-------------------------------------------%
+
+
+
+%-------------------------------------------%
+\clearpage
+\appendix
+\chapter{Mathematical Methods}
+\label{appendixA}
+\section{Taylor Series}
+ \begin{align*}
+    P(x) = f(x)\bigg|_{x = c} &+ \left(\dfrac{df(x)}{dx}\bigg|_{x = c}\right) \left(\dfrac{x-c}{1!}\right) + \left(\dfrac{d^2f(x)}{dx^2}\bigg|_{x = c}\right)\left(\dfrac{(x-c)^2}{2!}\right) \\&+ \left(\dfrac{d^3f(x)}{dx^3}\bigg|_{x = c}\right)\left(\dfrac{(x-c)^3}{3!}\right) + \ldots
+\end{align*}
+which is nothing but just a very verbose way of writing 
+\begin{align*}
+    P(x) &= f(c) + f'(c)(x-c) + \frac{f''(c)}{2!}(x-c)^2 + \frac{f'''(c)}{3!}(x-c)^3 + \ldots \\
+    &= \sum_{n=0}^{\infty} \frac{f^{(n)}(c)}{n!}(x-c)^n
+\end{align*}
+
+Where \qquad
+$ f'(c) = \dfrac{df(x)}{dx}\bigg|_{x=c} $ , $f''(c) = \dfrac{d^2f(x)}{d^2x}\bigg|_{x=c}$ and $ f^n(c) = \dfrac{d^nf(x)}{d^nx}\bigg|_{x=c} $ \\
+
+A natural question which must arise is what is this function and how is this correct. First answering the question of what is this function , Here $P(x)$ is called Taylor Polynomial which gives a reasonably good approximation for the function $f(x)$ at the point $c$ in domain of $f(x)$ .\\
+Now We will try to find why does this function works so well ,the logic behind this can be explained by taking an example question of what is the polynomial function which can approximate $\sin(x)$ around point $x=0$ . $$\sin(x) \approx  a_o + a_1x +a_2 x^2 +\ldots $$      % 1st derivaties as informations , 2nd why polynomialic function , 3rd radius of convergence eg ln limiting case of e^x sin(x) and cos(x) waht does additing of infinite terms means dont they approach infinity , difference between equating and appoximating a function.
+\section{Runge-Kutta Method}
+RK4 stands for Runge-Kutta $4^{th}$ order, which is a method used to find numerical solutions of ordinary differential equations. Let's take a general $1^{st}$ order differential equation:
+\begin{equation*}
+    \dfrac{dx}{dt} = f(x,t)
+\end{equation*}
+Where $t$ is an independent variable. What we are interested in doing is finding the value of $x(t)$ at point $t_2$ in terms of $t_1$, for which we know the value of $x(t_1)$. 
+
+Let's take $x(t)$ and add a very small number $h$, which is defined as $h = t_2 - t_1$, into $t$: [cite: 360]
+\begin{equation*}
+    x(t+h) = x(t) + h x'(t) + \dfrac{h^2}{2!}x''(t) + \dfrac{h^3}{3!}x'''(t) + O(h^4) \tag{from Taylor expansion}
+\end{equation*}
+Ignoring terms greater than $O(h)$ because $h \ll 1$ and substituting $x'(t) = f(x,t)$, we obtain: [cite: 363, 364]
+\begin{equation}
+\label{euler_method}
+    x(t+h) \approx x(t) + h f(x,t)
+\end{equation}
+This is known as \textbf{Euler's Method}, but this method is not ideal because to get a good result we might need too many steps or sometimes cannot get a result at all. [cite: 366] We can get a much better approximation using just a little more algebraic manipulation. 
+
+We know: [cite: 367, 368]
+\begin{equation*}
+    x(t+h) = x(t) + h x'(t) + \dfrac{h^2}{2!}x''(t) + \dfrac{h^3}{3!}x'''(t) + \dfrac{h^4}{4!}x^{(iv)}(t) + O(h^5)
+\end{equation*}
+Since $x' = f(x(t),t)$, we now calculate $x''$ and $x'''$: [cite: 370]
+\begin{align*}
+    x'' &= \dfrac{df(x(t),t)}{dt} \\[8pt]
+        &= \dfrac{\partial f(x,t)}{\partial t} + \dfrac{\partial f(x,t)}{\partial x} \cdot \dfrac{dx}{dt} \tag{Since $\frac{dx}{dt}=f(x,t)$} \\[8pt]
+        &= f_t + f_x f \\[12pt]
+    x''' &= \dfrac{dx''}{dt} = \dfrac{d}{dt}(f_t + f_x f) \\[8pt]
+         &= \underbrace{\dfrac{d(f_t)}{dt}}_{\text{term A}} + \underbrace{\dfrac{d(f_x f)}{dt}}_{\text{term B}}
+\end{align*}
+
+\paragraph{Solving term A:}
+\begin{align*}
+    \dfrac{d(f_t)}{dt} &= \dfrac{d}{dt} \left( \dfrac{\partial f(x(t),t)}{\partial t} \right) \\[8pt]
+    &= \dfrac{\partial^2 f(x(t),t)}{\partial t^2} + \dfrac{\partial}{\partial x} \left( \dfrac{\partial f(x(t),t)}{\partial t} \right) \cdot \dfrac{dx(t)}{dt} \\[8pt]
+    &= f_{tt} + f f_{xt}
+\end{align*}
+
+\paragraph{Solving term B:}
+\begin{align*}
+    \dfrac{d(f_x f)}{dt} &= \dfrac{d}{dt} \left( f(x(t),t) \cdot \dfrac{\partial f(x(t),t)}{\partial x} \right) \\[8pt]
+    &= \dfrac{df}{dt} \cdot f_x + f \cdot \dfrac{d(f_x)}{dt} \\[8pt]
+    &= (f_t + f f_x) f_x + f \left( \dfrac{\partial f_x}{\partial t} + \dfrac{\partial f_x}{\partial x} \dfrac{dx}{dt} \right) \\[8pt]
+    &= (f_t f_x + f (f_x)^2) + f (f_{xt} + f_{xx} f) \\[8pt]
+    &= f_t f_x + f (f_x)^2 + f f_{xt} + f^2 f_{xx}
+\end{align*}
+
+\section{Introduction to Complex Exponential function and S - plane}
+In the last section we were able to justified \eqref{final_FDO_form} now we are interested to solve the following equation but before that we need some important mathematical background which will be introduced in this section.\\
+
+
+We  are very familiar with a very fundamental function $e^t$ in the $x-t$ plane for our convenience I will be discussing the function in only time domain for better understanding of physical significance . For describing the family of function of exponential function we take $e^{st}$ where $s$ $\in\mathbb{R}$ we are very comfortable with this generalization but we can generalize this function a lot more which will be a very powerful tool for solving \eqref{gen_nth_ode} type of equations . This generalization is just allowing $s$ to take real as well as complex values to that is $s$ $\in\mathbb{C}$ \\
+Let $s = a +ib$ where $i = \sqrt{-1}$ and $a,b\in \mathbb{R}$ 
+\begin{align*}
+    s &= a + ib\\
+    \implies x &= e^{(a + ib)t}\\
+    x &= e^{at}\cdot e^{ibt}\\
+\end{align*}
+But what does $e^{ibt}$ means or rather taking a very simple case $e^{ib}$ ?.\\
+\textbf{Defining Complex Exponents}
+
+We define $e^{ib}$ to be equall to the value when we expand the same using \textbf{Taylor Series} which get us :-
+\begin{align}
+ \label{ex_series}
+e^{ib}= 1 + (ib) + \frac{(ib)^2}{2!} + \frac{(ib)^3}{3!} + \frac{(ib)^4}{4!} + \frac{(ib)^5}{5!} + \ldots 
+\end{align}
+
+which for a given $b$ $\in\mathbb{R}$ is a convergent series .
+
+Now we try to simplify \eqref{ex_series} for as to find a usable result.
+\begin{align*}
+    e^{ib} &= 1 + ib - \frac{b^2}{2!} - i\frac{b^3}{3!} + \frac{b^4}{4!} + i\frac{b^5}{5!} - \frac{b^6}{6!} - i\frac{b^7}{7!} + \ldots \\
+    \intertext{Now, we collect the \textbf{Real} terms (those without $i$) and the \textbf{Imaginary} terms (those multiplied by $i$):}
+    e^{ib} &= \left( 1 - \frac{b^2}{2!} + \frac{b^4}{4!} - \frac{b^6}{6!} + \ldots \right) + i \left( b - \frac{b^3}{3!} + \frac{b^5}{5!} - \frac{b^7}{7!} + \ldots \right)
+\end{align*}
+
+We recognize the series in the first parenthesis as the Maclaurin series for $\cos(b)$, and the series in the second parenthesis as the Maclaurin series for $\sin(b)$:
+\begin{align*}
+    \cos(b) &= 1 - \frac{b^2}{2!} + \frac{b^4}{4!} - \frac{b^6}{6!} + \ldots \\
+    \sin(b) &= b - \frac{b^3}{3!} + \frac{b^5}{5!} - \frac{b^7}{7!} + \ldots
+\end{align*}
+
+Substituting these functions back into the expanded form of $e^{ib}$, we derive \textbf{Euler's\\ Formula}:
+\begin{equation} \label{eq:euler}
+    \mathbf{e^{ib} = \cos(b) + i\sin(b)}
+\end{equation}
+
+This is the complete definition of complex Exponents $e^{ib}$ .\\
+\textbf{Graphical Representation}
+
+We know how is $e^{ibt}$ defined now we will try to understand its graphical significance of the same on the \gls{Argand plane}.\\
+We define a complex number no Argand plane like a point on the 2-D plane but if we change the representation a little we can represent a complex number in a different way .\\ Forget the first figure %argand plane emperical defination
+now we take a point on the plane and draw a line which can connect the point from the origin and define the length of the line to be $r$ and the angle $\theta$ in anti-clockwise direction ,then using Pythagoras theorem to find the base of the right angle triangle to be $r\cos(\theta)$ and the length of the right angle triangle to be $r\sin(\theta)$ which gives us a new representation of the same point as in figure one .\\ %check it out
+Thus we can conclude that 
+\begin{align*}
+    x &= r\cos(\theta)\\
+    y &= r\sin(\theta)\\
+    \text{we know,\qquad}z &= x + iy\\
+    \implies z &= r\cos(\theta) + ir\sin(\theta)\\
+    \implies z &= r (\cos(\theta) + i\sin(\theta)) = r\cdot e^{i\theta}
+\end{align*}
+\\
+Continuing our discussion of complex exponents($e^{st}$) , we will try to see this functions behavior on the Argand plane . Here we treat $"s"$ to be an independent variable which take any complex values which we visualize picking a point from a 2-D complex plane which is continently called as \textbf{s-plane}. %drawn in a fig
+\begin{align*}
+    e^{st} &= e^{(a+ib)t}\\
+           &= \underbrace{e^{at}}_\text{term A}\cdot\underbrace{e^{ibt}}_\text{term B} \\
+\end{align*}
+Looking at Term A:-\\
+We can see that it will either be a exponentially increasing term or a exponentially decreasing term depending on the sign of $a$.\\
+Next is Term B:-\\
+$e^{ibt}$ using the Euler's equation we get $e^{ibt} = \cos(bt) +i\sin(bt)$ which in a complex plan is nothing but a equation of circle moving in clockwise or anticlockwise direction according to the sign of $b$.\\
+When we take both terms together we see either an exponentially decreasing circular starting from $1$ and converging at $0$ or exponentially increasing circle diverging to infinity both either move in clockwise or anticlockwise direction .
+
+%take cases of a s only imaginary(+,-) , real (+,-) ,complex with intersting result but try to make it obvious as a product of the before 4 results obtained
+
+\section{Fourier Series}
+\section{Laplace Transform}
+
+\section{Method of Multiple Time Scales}
+%write a little bit about perturbation method too
+\chapter{Further Reading}
+\section{Linear Oscillator with Non-sinusoidal Discontinuous Forcing}
+We have seen in previous sections how a linear oscillator behaves under sinusoidal forcing. However, in nature, we often encounter sudden, discontinuous forces—such as a blast load or a sudden mechanical impact—which act very much like a step function. To understand how an oscillator responds to these non-continuous, real-life forces, we will explore a generalized mathematical approach.
+
+\subsection{Complete Solution} 
+We take a forced linear damped oscillator:
+\begin{equation*}
+    m\ddot{x} + \gamma\dot{x} + kx = F(t)
+\end{equation*}
+where the forcing function $F(t)$ is an arbitrary or discontinuous function. 
+
+Now to solve this equation we call for a property which was already introduced before which is that 
+the differential operator is linear which was discussed before in detail. Thus we break our $x(t)$
+into two parts which is before and after the strike of the forcing.
+
+Thus $x(t) = x_b(t) + x_a(t)$ , where $x_b(t)$ is the before strike respone 
+and $x_a(t)$
+is the respone after the strike. We can simplify the solution by taking the 
+force as a step function .
+\begin{align*}
+    F(t) = 
+\begin{cases} 
+      0 & \text{if } 0 < t \le T \\
+      1 & \text{if } T < t \le 2T 
+\end{cases}
+\end{align*}
+
+when the $t<T$ there is no force acting on the system so the solution to the 
+the system is acting like a free damped oscillator which was solved in section 1.1.2 \eqref{eq:solution_FDO}
+thus we get a solution for $x_b(t) = $
+
+
+
+
+To solve this in a simple manner without guessing the solution, we use the \textbf{Green's Function} method. Instead of tackling the complicated $F(t)$ all at once, we first ask a simpler question: how does the system react to a single, instantaneous "hammer strike"?
+
+Mathematically, this strike is represented by the Dirac delta function $\delta(t-\tau)$, where $\tau$ is the exact moment of impact. The response of the system to this unit impulse is called the Green's function, $G(t, \tau)$.
+
+Because the system is linear, the Principle of Superposition holds. We can think of any continuous or discontinuous force $F(t)$ as an infinite series of consecutive, tiny impulses. We find the total displacement by summing (integrating) the system's responses to all these individual impulses. This is known as the \textbf{Convolution Integral}:
+\begin{equation*}
+    x_p(t) = \int_{0}^{t} F(\tau) G(t, \tau) d\tau
+\end{equation*}
+This integral gives us the exact particular solution for any forcing function. It seamlessly handles discontinuities because the integral calculates the area piece by piece, bypassing the sudden "jumps" in the force. The complete solution to the system is then simply the sum of the unforced natural motion (homogeneous solution) and this forced response.
+
+
+\subsection{Transient vs. Steady-State Solution}
+When a sudden, non-sinusoidal force (like a square wave or a step function) is applied, the system does not instantly settle into a smooth rhythm. It initially experiences a chaotic "startup" phase. 
+
+This initial chaotic motion is the \textbf{Transient Solution}. Because the Green's function is built using the natural properties of the system, the convolution integral automatically captures this transient behavior. Over time, due to the damping term ($\gamma$), these transient vibrations decay to zero.
+
+If the discontinuous force is periodic (like a continuous square wave) and we
+ only care about the long-term \textbf{Steady-State} motion after the transients
+  have died out, we can use an alternative method: the \textbf{Fourier Series}. 
+By breaking the square wave into an infinite sum of smooth sine and cosine waves, we can calculate the steady-state response for each harmonic individually and add them together.
+
+
+\section{Rayleigh-Duffing Oscillator Rotating Vector Analysis}
+\end{document}
